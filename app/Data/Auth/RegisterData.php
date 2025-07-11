@@ -7,17 +7,14 @@ use Spatie\LaravelData\Data;
 class RegisterData extends Data
 {
     public function __construct(
-        public string $name,
-        public string $email,
+        public string $phone,
         public string $password,
-        public string $password_confirmation
     ) {}
 
     public static function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
+            'phone' => ['required', 'phone:VN', 'unique:users,phone'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ];
     }
