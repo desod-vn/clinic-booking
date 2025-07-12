@@ -33,8 +33,11 @@ readonly class AuthService
         );
     }
 
-    public function invalidateAccessToken(LoginData $dto): void
+    public function invalidateAccessToken(): void
     {
+        if (! auth('api')->check()) {
+            return;
+        }
         auth('api')->logout();
     }
 }

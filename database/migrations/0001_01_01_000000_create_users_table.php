@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRoleEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,6 +17,7 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('password');
+            $table->string('role')->default(UserRoleEnum::CUSTOMER->value);
             $table->rememberToken();
             $table->timestamps();
         });

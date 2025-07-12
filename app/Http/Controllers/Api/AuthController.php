@@ -5,21 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Data\Auth\LoginData;
 use App\Data\Auth\RegisterData;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Services\Auth\AuthService;
 use App\Services\User\UserService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Hash;
 use Spatie\RouteAttributes\Attributes\Post;
 use Spatie\RouteAttributes\Attributes\Prefix;
 use Throwable;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 #[Prefix('api/auth')]
 class AuthController extends Controller
 {
-
     public function __construct(
         private readonly AuthService $authService,
         private readonly UserService $userService
@@ -37,7 +31,6 @@ class AuthController extends Controller
             );
         } catch (Throwable $e) {
             return $this->apiError(
-                message: $e->getMessage(),
                 exception: $e,
             );
         }
@@ -53,23 +46,21 @@ class AuthController extends Controller
             );
         } catch (Throwable $e) {
             return $this->apiError(
-                message: $e->getMessage(),
                 exception: $e,
             );
         }
     }
 
     #[Post('/logout', name: 'auth.logout')]
-    public function logout(RegisterData $request)
+    public function logout()
     {
         try {
-            $data = $this->userService->createAndLoginUser($request);
+            $this->authService->invalidateAccessToken();
             return $this->apiSuccess(
-                data: $data
+                message: 'Logout successfully.'
             );
         } catch (Throwable $e) {
             return $this->apiError(
-                message: $e->getMessage(),
                 exception: $e,
             );
         }

@@ -11,7 +11,7 @@ use Throwable;
 
 abstract class Controller
 {
-    protected function apiSuccess(mixed $data, string $message = 'Success')
+    protected function apiSuccess(mixed $data = [], string $message = 'Success')
     {
         return response()->json([
             'status' => true,
@@ -38,7 +38,7 @@ abstract class Controller
 
         return response()->json([
             'status' => false,
-            'message' => $message,
+            'message' => $exception ? $exception->getMessage() : $message,
             'errors' => $errors,
         ], $httpCode);
     }
