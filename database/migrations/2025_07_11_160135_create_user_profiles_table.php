@@ -24,9 +24,9 @@ return new class extends Migration
             $table->string('nationality')->nullable();
             $table->string('ethnicity')->nullable();
             $table->string('national_id_number')->nullable();
-            $table->string('province');
-            $table->string('ward');
-            $table->string('address');
+            $table->string('province')->nullable();
+            $table->string('ward')->nullable();
+            $table->string('address')->nullable();
             $table->timestamps();
         });
     }

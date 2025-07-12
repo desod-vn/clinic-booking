@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Data\User\UserProfileData;
 use App\Http\Controllers\Controller;
 use App\Services\User\UserProfileService;
+use App\Services\User\UserService;
 use Throwable;
 use Spatie\RouteAttributes\Attributes\Get;
 use Spatie\RouteAttributes\Attributes\Middleware;
@@ -12,24 +13,32 @@ use Spatie\RouteAttributes\Attributes\Post;
 use Spatie\RouteAttributes\Attributes\Prefix;
 
 #[Middleware('auth:api')]
-#[Prefix('api/profile')]
+#[Prefix('api/user-profile')]
 class UserProfileController extends Controller
 {
-    public function __construct(private readonly UserProfileService $userProfileService)
+    public function __construct(
+        private readonly UserService $userService,
+        private readonly UserProfileService $userProfileService
+    )
     {
-
     }
 
-    #[Get('/', name: 'profile.show')]
-    public function show()
+    #[Get('/me', name: 'user-profile.me')]
+    public function me()
     {
-        return response()->json([
-            'message' => 'Profile information retrieved successfully.',
-            'data' => auth()->user(),
-        ]);
+        try {
+            $user = $this->userService->getCurrentUser();
+            return $this->apiSuccess(
+                message: 'Profile updated successfully.',
+            );
+        } catch (Throwable $e) {
+            return $this->apiError(
+                exception: $e,
+            );
+        }
     }
 
-    #[Post('/update', name: 'profile.update')]
+    #[Post('/update', name: 'user-profile.update')]
     public function update(UserProfileData $request)
     {
         try {
@@ -39,7 +48,6 @@ class UserProfileController extends Controller
             );
         } catch (Throwable $e) {
             return $this->apiError(
-                message: $e->getMessage(),
                 exception: $e,
             );
         }
