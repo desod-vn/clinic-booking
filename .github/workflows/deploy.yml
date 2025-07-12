@@ -1,0 +1,30 @@
+name: CI/CD CLINIC BOOKING API
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Create source folder
+        run: mkdir -p $HOME/$GITHUB_REPOSITORY
+      - name: Move source
+        run: rsync -av --remove-source-files ./ $HOME/$GITHUB_REPOSITORY
+      - name: Make ENV file if not exist
+        run: |
+          cd $HOME/$GITHUB_REPOSITORY
+          [ ! -s .env ] && [ -n "${{ vars.ENV }}" ] && echo -n "${{ vars.ENV }}" > .env || true
+      - name: Run docker compose
+        run: |
+          cd $HOME/$GITHUB_REPOSITORY
+          docker compose down
+          docker compose up -d --build
+      - name: Run artisan command
+        run: |
+          cd $HOME/$GITHUB_REPOSITORY
+          docker compose run -i --rm cba-php composer install
+          docker compose run -i --rm cba-php php artisan migrate --force
